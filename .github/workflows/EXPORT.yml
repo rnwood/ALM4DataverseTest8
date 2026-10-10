@@ -1,0 +1,45 @@
+name: EXPORT
+
+# Manually triggered: exports Dataverse solutions from your development environment
+# and commits the unpacked changes back to this branch.
+#
+# See docs/usage/exporting-changes.md and docs/setup/github-setup.md
+
+run-name: Export ${{ github.ref_name }} by @${{ github.actor }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      commit-message:
+        description: 'Commit message for the exported changes'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+  id-token: write
+  actions: write
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    environment:
+      name: ${{ format('Dev-{0}', github.ref_name) }}
+      deployment: false
+    concurrency:
+      group: ${{ format('alm4dataverse-environment-{0}', format('Dev-{0}', github.ref_name)) }}
+      cancel-in-progress: false
+    permissions:
+      contents: write
+      id-token: write
+      actions: write
+    steps:
+      - name: Export Dataverse solutions
+        uses: rnwood/ALM4DataverseTest8Shared/.github/actions/export@main
+        with:
+          commit-message: ${{ inputs.commit-message }}
+          environment-name: ${{ format('Dev-{0}', github.ref_name) }}
+          all-repo-vars-json: ${{ toJSON(vars) }}
+          all-repo-secrets-json: ${{ toJSON(secrets) }}
+          workflow-dispatch-token: ${{ secrets.WORKFLOW_DISPATCH_TOKEN || secrets.GH_WORKFLOW_TOKEN || github.token }}

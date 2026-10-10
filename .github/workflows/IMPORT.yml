@@ -1,0 +1,35 @@
+name: IMPORT
+
+# Manually triggered: builds the current source and deploys it as unmanaged
+# solutions into your development Dataverse environment.
+#
+# See docs/usage/importing-changes.md and docs/setup/github-setup.md
+
+run-name: Import ${{ github.ref_name }} by @${{ github.actor }}
+
+on:
+  workflow_dispatch:
+
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    environment:
+      name: ${{ format('Dev-{0}', github.ref_name) }}
+      deployment: false
+    concurrency:
+      group: ${{ format('alm4dataverse-environment-{0}', format('Dev-{0}', github.ref_name)) }}
+      cancel-in-progress: false
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Import Dataverse solutions
+        uses: rnwood/ALM4DataverseTest8Shared/.github/actions/import@main
+        with:
+          environment-name: ${{ format('Dev-{0}', github.ref_name) }}
+          all-repo-vars-json: ${{ toJSON(vars) }}
+          all-repo-secrets-json: ${{ toJSON(secrets) }}
+    # Credentials are resolved automatically from either:
+    # 1) GitHub environment Dev-{branch} (default), or
+    # 2) repo-level prefixed secrets/variables (e.g. DEV_MAIN_* or PREFIX_*).
