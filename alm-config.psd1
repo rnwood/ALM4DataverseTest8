@@ -140,6 +140,6 @@
     # }
 
     solutionCheck = @{
-        enabled = $true
+        enabled = $false
     }
 }
