@@ -142,4 +142,8 @@
     solutionCheck = @{
         enabled = $true
     }
+
+    buildValidation = @{
+        baselineRelease = '@test'
+    }
 }
