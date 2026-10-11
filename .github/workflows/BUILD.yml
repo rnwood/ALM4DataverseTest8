@@ -23,7 +23,8 @@ jobs:
         timeout-minutes: 360
         environment:
             name: 'Build'
-            deployment: false        permissions:
+            deployment: false
+        permissions:
             contents: write
             actions: write
             id-token: write
