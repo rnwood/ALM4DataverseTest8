@@ -1,3 +1,4 @@
+[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSReviewUnusedParameter', 'context', Justification = 'Required hook entry-point contract available to repository-specific implementations.')]
 param($context)
 ### Phase 1 - Upsert new and updated records
 
@@ -10,5 +11,5 @@ Get-DataverseRecordsFolder -InputPath $PSScriptRoot/new_exampleconfigtable |
 
 <# Example - uncomment and enter your table name
 Get-DataverseRecordsFolder -InputPath $PSScriptRoot/new_exampleconfigtable -deletions |
-     Remove-DataverseRecord -Connection $c -Verbose -IfExists
+  Remove-DataverseRecord -TableName new_exampleconfigtable -Verbose -IfExists
 #>
