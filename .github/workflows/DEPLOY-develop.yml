@@ -49,7 +49,7 @@ jobs:
           environment-name: 'test'
           previous-environment-name: ''
           promotion-mode: manual-gate-tag
-          trigger-branch: 'develop'
+          trigger-branch: 'org-settings-test'
           github-context-json: ${{ toJSON(github) }}
           caller-inputs-json: ${{ toJSON(inputs) }}
           vars-json: ${{ toJSON(vars) }}

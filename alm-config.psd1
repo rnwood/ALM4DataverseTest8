@@ -34,6 +34,32 @@
         }
     )
 
+    organizationSettings = @{
+        IsCustomControlsInCanvasAppsEnabled = $false
+    }
+
+    postDeployOrganizationSettings = @{
+        # The scriptblock receives $Context with HookType, BaseDirectory, Config, ArtifactsPath,
+        # and UseUnmanagedSolutions; it returns one value for this setting.
+        IsCustomControlsInCanvasAppsEnabled = {
+            param($Context)
+            [bool]($Context.HookType -eq 'postDeploy')
+        }
+    }
+
+    orgDbOrgSettings = @{
+        IsLockDownOfUnmanagedCustomizationEnabled = $false
+    }
+
+    postDeployOrgDbOrgSettings = @{
+        # The scriptblock receives $Context with HookType, BaseDirectory, Config, ArtifactsPath,
+        # and UseUnmanagedSolutions; it returns one value for this setting.
+        IsLockDownOfUnmanagedCustomizationEnabled = {
+            param($Context)
+            [bool]($Context.HookType -eq 'postDeploy')
+        }
+    }
+
     # Node.js version required by configured Power Apps code apps.
     nodeVersion = '22'
 
