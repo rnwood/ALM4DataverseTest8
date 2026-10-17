@@ -48,15 +48,22 @@
     }
 
     orgDbOrgSettings = @{
-        IsLockDownOfUnmanagedCustomizationEnabled = $false
+        # Read and return the current value to exercise OrgDbOrgSettings without changing it.
+        # The scriptblock receives $Context with HookType, BaseDirectory, Config, ArtifactsPath,
+        # and UseUnmanagedSolutions; it returns one value for this setting.
+        MaxUploadFileSize = {
+            param($Context)
+            (Get-DataverseOrganizationSettings -OrgDbOrgSettings).MaxUploadFileSize
+        }
     }
 
     postDeployOrgDbOrgSettings = @{
+        # Read and return the current value to exercise the final OrgDbOrgSettings map without changing it.
         # The scriptblock receives $Context with HookType, BaseDirectory, Config, ArtifactsPath,
         # and UseUnmanagedSolutions; it returns one value for this setting.
-        IsLockDownOfUnmanagedCustomizationEnabled = {
+        MaxUploadFileSize = {
             param($Context)
-            [bool]($Context.HookType -eq 'postDeploy')
+            (Get-DataverseOrganizationSettings -OrgDbOrgSettings).MaxUploadFileSize
         }
     }
 
