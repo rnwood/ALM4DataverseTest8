@@ -29,9 +29,12 @@
     solutions = @(
         @{
             name = 'Solution1'
+            codeApps = @('code-apps/ALM4DataverseTestApp')
         }
     )
 
+    # Node.js version required by configured Power Apps code apps.
+    nodeVersion = '22'
 
     # Extra folders/files to include in build artifacts (copied verbatim).
     assets = @(

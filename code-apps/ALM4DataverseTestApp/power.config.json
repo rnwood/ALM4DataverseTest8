@@ -1,0 +1,15 @@
+{
+  "version": "1.0",
+  "appId": null,
+  "appDisplayName": "ALM4Dataverse Test Code App",
+  "region": "prod",
+  "appType": "CodeApp",
+  "environmentId": "6ec1e8a0-2c7a-e5a7-bedf-253cba4b56a9",
+  "description": " ",
+  "buildPath": "./dist",
+  "buildEntryPoint": "index.html",
+  "localAppUrl": "http://localhost:3000",
+  "logoPath": "Default",
+  "connectionReferences": {},
+  "databaseReferences": {}
+}
