@@ -30,6 +30,7 @@
         @{
             name = 'Solution1'
             codeApps = @('code-apps/ALM4DataverseTestApp')
+            codeAppPublishMethod = 'solution'
         }
     )
 

@@ -129,6 +129,7 @@
     </Publisher>
     <RootComponents>
       <RootComponent type="1" schemaName="rnw_table1" behavior="0" />
+      <RootComponent type="300" schemaName="rnw_alm4dataversetestcodeapp_92de2" behavior="0" />
     </RootComponents>
     <MissingDependencies />
   </SolutionManifest>
