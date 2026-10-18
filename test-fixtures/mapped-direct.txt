@@ -1,1 +1,1 @@
-direct mapping collision guard opt-out test
+direct mapping fixture v1

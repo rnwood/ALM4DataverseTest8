@@ -165,10 +165,6 @@
         enabled = $false
     }
 
-    build = @{
-        versionCollisionGuard = $false
-    }
-
     buildValidation = @{
         baselineRelease = ''
     }
