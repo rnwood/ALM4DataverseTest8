@@ -31,6 +31,24 @@
             name = 'Solution1'
             codeApps = @('code-apps/ALM4DataverseTestApp')
             codeAppPublishMethod = 'solution'
+            mappings = @(
+                @{
+                    type = 'FileToFile'
+                    source = 'test-fixtures/mapped-direct.txt'
+                    destination = 'CanvasApps\rnw_alm4dataversetestcodeapp_92de2_CodeAppPackages\assets\alm4dv-mapped-direct.txt'
+                }
+                @{
+                    type = 'FileToFile'
+                    source = 'code-apps/ALM4DataverseTestApp/dist/alm4dv-mapped-build.txt'
+                    destination = 'CanvasApps\rnw_alm4dataversetestcodeapp_92de2_CodeAppPackages\assets\alm4dv-mapped-build.txt'
+                    buildCommand = @{
+                        name = 'Generate mapped build output'
+                        executable = 'pwsh'
+                        arguments = @('-NoProfile', '-File', 'scripts/Generate-MappedBuildOutput.ps1')
+                        workingDirectory = '.'
+                    }
+                }
+            )
         }
     )
 
