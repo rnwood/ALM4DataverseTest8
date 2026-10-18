@@ -146,4 +146,11 @@
     buildValidation = @{
         baselineRelease = ''
     }
+
+    deployment = @{
+        branches = @{
+            main = @('prod')
+            develop = @('test')
+        }
+    }
 }

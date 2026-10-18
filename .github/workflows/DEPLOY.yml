@@ -1,0 +1,121 @@
+name: DEPLOY
+
+run-name: ${{ format('Deploy {0} <- {1}', inputs['target-environment'] || 'next configured', inputs['build-run-name'] || format('latest from {0}', inputs.branch || github.ref_name)) }}
+
+permissions:
+  actions: write
+  contents: write
+  id-token: write
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: Source branch to deploy. Blank uses the selected workflow ref.
+        required: false
+        type: string
+      build-run-name:
+        description: Optional exact BUILD name or run ID. Blank uses the latest successful BUILD from the branch.
+        required: false
+        type: string
+      target-environment:
+        description: Optional target environment. Blank starts at the first configured environment.
+        required: false
+        type: string
+      source-sha:
+        description: Internal continuation value; leave blank for a manual deployment.
+        required: false
+        type: string
+jobs:
+  select_deployment:
+    runs-on: ubuntu-latest
+    outputs:
+      branch: ${{ steps.select.outputs.branch }}
+      target_environment: ${{ steps.select.outputs.target_environment }}
+      previous_environment: ${{ steps.select.outputs.previous_environment }}
+    steps:
+      - name: Check out deployment configuration
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs['source-sha'] || inputs.branch || github.ref }}
+          path: source
+          fetch-depth: 1
+
+      - name: Select configured target
+        id: select
+        shell: pwsh
+        working-directory: source
+        env:
+          SELECTED_BRANCH: ${{ inputs.branch || github.ref_name }}
+          REQUESTED_ENVIRONMENT: ${{ inputs['target-environment'] || '' }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $branch = [string]$env:SELECTED_BRANCH
+          if ([string]::IsNullOrWhiteSpace($branch) -or $branch.Contains("`n") -or $branch.Contains("`r")) {
+            throw 'A valid source branch is required.'
+          }
+          if (-not (Test-Path -LiteralPath 'alm-config.psd1' -PathType Leaf)) {
+            throw "alm-config.psd1 was not found for source branch '$branch'."
+          }
+          $config = Import-PowerShellDataFile -LiteralPath 'alm-config.psd1'
+          if (-not $config.Contains('deployment') -or -not $config.deployment.Contains('branches')) {
+            "branch=$branch" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+            "target_environment=" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+            "previous_environment=" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+            Write-Host "No deployment mappings are configured for '$branch'; skipping deployment."
+            exit 0
+          }
+          $mappings = $config.deployment.branches
+          if (-not $mappings.Contains($branch)) {
+            "branch=$branch" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+            "target_environment=" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+            "previous_environment=" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+            Write-Host "No deployment environments are configured for '$branch'; skipping deployment."
+            exit 0
+          }
+          $environments = @($mappings[$branch] | ForEach-Object { [string]$_ })
+          if (@($environments | Where-Object { [string]::IsNullOrWhiteSpace($_) -or $_.Contains("`n") -or $_.Contains("`r") }).Count -gt 0) {
+            throw "Deployment mapping for '$branch' contains an invalid environment name."
+          }
+          $target = [string]$env:REQUESTED_ENVIRONMENT
+          if ([string]::IsNullOrWhiteSpace($target)) {
+            $target = [string]$environments[0]
+          }
+          $targetIndex = [Array]::IndexOf($environments, $target)
+          if ($targetIndex -lt 0) {
+            throw "Target environment '$target' is not configured for branch '$branch'."
+          }
+          $previous = if ($targetIndex -gt 0) { [string]$environments[$targetIndex - 1] } else { '' }
+          "branch=$branch" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+          "target_environment=$target" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+          "previous_environment=$previous" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+
+  deploy:
+    needs: select_deployment
+    if: needs.select_deployment.outputs.target_environment != ''
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    environment: ${{ needs.select_deployment.outputs.target_environment }}
+    concurrency:
+      group: alm4dataverse-environment-${{ needs.select_deployment.outputs.target_environment }}
+      cancel-in-progress: true
+    permissions:
+      actions: write
+      contents: write
+      id-token: write
+    steps:
+      - name: Deploy selected BUILD
+        uses: rnwood/ALM4DataverseTest8Shared/.github/actions/deploy@copilot-deploy-config-file-refactor-test-8f418377
+        with:
+          environment-name: ${{ needs.select_deployment.outputs.target_environment }}
+          previous-environment-name: ${{ needs.select_deployment.outputs.previous_environment }}
+          promotion-mode: manual-gate-tag
+          trigger-branch: ${{ needs.select_deployment.outputs.branch }}
+          continue-deployment: 'false'
+          github-context-json: ${{ toJSON(github) }}
+          caller-inputs-json: ${{ toJSON(inputs) }}
+          vars-json: ${{ toJSON(vars) }}
+          secrets-json: >-
+            {
+              "AZURE_CLIENT_SECRET": ${{ toJSON(secrets.AZURE_CLIENT_SECRET) }}
+            }
