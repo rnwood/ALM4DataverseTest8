@@ -109,9 +109,9 @@ jobs:
         with:
           environment-name: ${{ needs.select_deployment.outputs.target_environment }}
           previous-environment-name: ${{ needs.select_deployment.outputs.previous_environment }}
-          promotion-mode: manual-gate-tag
+          promotion-mode: environment-approval
           trigger-branch: ${{ needs.select_deployment.outputs.branch }}
-          continue-deployment: 'false'
+          continue-deployment: 'true'
           github-context-json: ${{ toJSON(github) }}
           caller-inputs-json: ${{ toJSON(inputs) }}
           vars-json: ${{ toJSON(vars) }}
