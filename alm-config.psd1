@@ -149,7 +149,7 @@
 
     deployment = @{
         branches = @{
-            main = @('prod')
+            main = @('test', 'prod')
             develop = @('test')
         }
     }
