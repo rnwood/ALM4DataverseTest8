@@ -27,10 +27,10 @@
   <CdsDependencies>{"cdsdependencies":[]}</CdsDependencies>
   <IsCustomizable>1</IsCustomizable>
   <CodeAppPackageUris>
+    <CodeAppPackageUri>/CanvasApps/rnw_alm4dataversetestcodeapp_92de2_CodeAppPackages/index.html_ContentType_text/html</CodeAppPackageUri>
     <CodeAppPackageUri>/CanvasApps/rnw_alm4dataversetestcodeapp_92de2_CodeAppPackages/assets/index-COcDBgFa.css_ContentType_text/css</CodeAppPackageUri>
     <CodeAppPackageUri>/CanvasApps/rnw_alm4dataversetestcodeapp_92de2_CodeAppPackages/assets/index-dRjwlPQc.js_ContentType_application/javascript</CodeAppPackageUri>
     <CodeAppPackageUri>/CanvasApps/rnw_alm4dataversetestcodeapp_92de2_CodeAppPackages/assets/react-CHdo91hT.svg_ContentType_image/svg+xml</CodeAppPackageUri>
-    <CodeAppPackageUri>/CanvasApps/rnw_alm4dataversetestcodeapp_92de2_CodeAppPackages/index.html_ContentType_text/html</CodeAppPackageUri>
     <CodeAppPackageUri>/CanvasApps/rnw_alm4dataversetestcodeapp_92de2_CodeAppPackages/vite.svg_ContentType_image/svg+xml</CodeAppPackageUri>
   </CodeAppPackageUris>
 </CanvasApp>
