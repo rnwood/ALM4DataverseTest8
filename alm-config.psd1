@@ -32,6 +32,7 @@
         }
     )
 
+    buildPackageDeployer = $true
 
     # Extra folders/files to include in build artifacts (copied verbatim).
     assets = @(
@@ -151,6 +152,7 @@
         branches = @{
             main = @('test', 'prod')
             develop = @('test')
+            'copilot/package-deployer-test-20261018' = @('test')
         }
     }
 }

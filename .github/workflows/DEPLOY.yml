@@ -105,7 +105,7 @@ jobs:
       id-token: write
     steps:
       - name: Deploy selected BUILD
-        uses: rnwood/ALM4DataverseTest8Shared/.github/actions/deploy@copilot-deploy-config-file-refactor-test-8f418377
+        uses: rnwood/ALM4DataverseTest8Shared/.github/actions/deploy@copilot/package-deployer-test-20261018
         with:
           environment-name: ${{ needs.select_deployment.outputs.target_environment }}
           previous-environment-name: ${{ needs.select_deployment.outputs.previous_environment }}
