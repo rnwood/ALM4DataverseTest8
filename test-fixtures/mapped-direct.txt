@@ -1,1 +1,1 @@
-direct mapping collision test v2
+direct mapping fixture v1

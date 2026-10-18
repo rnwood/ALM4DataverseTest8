@@ -1,1 +1,1 @@
-generated mapping fixture v1
+generated mapping collision test v2
