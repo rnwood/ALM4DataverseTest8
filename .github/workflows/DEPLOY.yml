@@ -93,7 +93,7 @@ jobs:
   deploy:
     needs: select_deployment
     if: needs.select_deployment.outputs.target_environment != ''
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     timeout-minutes: 360
     environment: ${{ needs.select_deployment.outputs.target_environment }}
     concurrency:
