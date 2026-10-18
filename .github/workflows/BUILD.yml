@@ -27,11 +27,12 @@ jobs:
             id-token: write
         steps:
             - name: Build Dataverse solutions
-              uses: rnwood/ALM4DataverseTest8Shared/.github/actions/build@main
+              uses: rnwood/ALM4DataverseTest8Shared/.github/actions/build@copilot-deploy-config-file-refactor-test-8f418377
               with:
                 build-name: ${{ format('{0}-{1}-{2}-{3}', github.event.repository.name, (github.event_name == 'repository_dispatch' && github.event.client_payload.branch) || github.ref_name, (github.event_name == 'repository_dispatch' && github.event.client_payload.exported_at) || github.event.head_commit.timestamp || github.event.repository.updated_at || github.run_id, github.run_number) }}
                 source-branch: ${{ (github.event_name == 'repository_dispatch' && github.event.client_payload.branch) || github.ref_name }}
                 source-ref: ${{ (github.event_name == 'repository_dispatch' && github.event.client_payload.sha) || github.sha }}
+                deployment-promotion-mode: manual-gate-tag
                 environment-name: ''
                 vars-json: ${{ toJSON(vars) }}
                 # Add any custom secrets explicitly to this JSON object.

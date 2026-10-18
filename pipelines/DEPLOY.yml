@@ -1,0 +1,53 @@
+trigger: none
+
+parameters:
+  - name: targetEnvironment
+    displayName: Deployment environment
+    type: string
+    default: ''
+  - name: previousEnvironment
+    type: string
+    default: ''
+
+resources:
+  pipelines:
+    - pipeline: build
+      source: 'BUILD'
+      trigger:
+        branches:
+          include:
+            - '*'
+  repositories:
+    - repository: ALM4Dataverse
+      type: git
+      name: ALM4Dataverse
+
+name: 'Deploy $(resources.pipeline.build.runName)'
+appendCommitMessageToRunName: false
+
+stages:
+  - ${{ if eq(parameters.targetEnvironment, '') }}:
+      - stage: SelectFirstEnvironment
+        displayName: Select first configured deployment environment
+        jobs:
+          - job: QueueFirstDeployment
+            steps:
+              - download: build
+                artifact: artifacts
+              - pwsh: |
+                  & "$(Pipeline.Workspace)/build/artifacts/alm/pipelines/scripts/continue-deployment.ps1" `
+                    -ArtifactsPath "$(Pipeline.Workspace)/build/artifacts" `
+                    -QueueInitial
+                displayName: Queue first configured deployment
+                env:
+                  SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+                  DEPLOY_BUILD_SOURCE_BRANCH: $(resources.pipeline.build.sourceBranch)
+                  DEPLOY_BUILD_RUN_NAME: $(resources.pipeline.build.runName)
+
+  - ${{ if ne(parameters.targetEnvironment, '') }}:
+      - template: pipelines/templates/stages/deploy-environment.yml@ALM4Dataverse
+        parameters:
+          environmentName: ${{ parameters.targetEnvironment }}
+          previousEnvironmentName: ${{ parameters.previousEnvironment }}
+          useAlm4DataverseExtension: true
+          continueDeployment: true
